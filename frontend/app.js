@@ -15,6 +15,12 @@ class App extends Component {
         window.addEventListener("hashchange", () => {
             this.currentRoute.value = window.location.hash.slice(1)
         });
+        this.getExpenses()
+    }
+    async getExpenses() {
+        let response = await fetch('http://127.0.0.1:8000/api/expense')
+        let data = await response.json()
+        console.log(data)
     }
     static template = xml`
         <t t-if="currentRoute.value === '/'">
