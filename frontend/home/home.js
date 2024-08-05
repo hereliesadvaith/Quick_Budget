@@ -9,6 +9,7 @@ export class Home extends Component {
                     <h1 class="text-primary fw-bold">QUICK BUDGET</h1>
                 </div>
             </div>
+            <a href="#/about">About</a>
         </div>
     `
 }
