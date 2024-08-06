@@ -1,4 +1,4 @@
-const {Component, xml} = owl;
+const {Component, xml} = owl
 
 
 export class Home extends Component {
@@ -9,7 +9,7 @@ export class Home extends Component {
                     <h1 class="text-primary fw-bold">QUICK BUDGET</h1>
                 </div>
             </div>
-            <a href="#/about">About</a>
+            <a href="/about">About</a>
         </div>
     `
 }

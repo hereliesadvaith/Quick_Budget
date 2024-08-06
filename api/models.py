@@ -15,4 +15,4 @@ class Expense(models.Model):
         """
         String Representation
         """
-        return f"{self.expense}: {self.price}"
+        return f'{self.expense}: {self.price}'

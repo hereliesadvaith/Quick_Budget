@@ -20,7 +20,7 @@ def get_routes(request):
         {
             'endpoint': '/expense/create/',
             'method': 'POST',
-            'body': {'body': ""},
+            'body': {'body': ''},
             'description': 'Creates new expense with data sent in post request'
         },
     ]
