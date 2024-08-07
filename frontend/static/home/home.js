@@ -1,3 +1,4 @@
+import { Table } from "./table/table.js"
 const {Component, xml} = owl
 
 
@@ -10,7 +11,11 @@ export class Home extends Component {
                     <h1 class="text-primary fw-bold">QUICK BUDGET</h1>
                 </div>
             </div>
-            <a href="/about" t-on-click="props.callback">About</a>
+            <div class="row">
+                <Table/>
+            </div>
         </div>
     `
+
+    static components = { Table }
 }
