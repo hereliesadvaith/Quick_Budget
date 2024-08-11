@@ -1,24 +1,32 @@
 const {
-    Component, xml, onWillStart, useState
+    Component, xml, useRef, useState, onWillStart, onMounted
 } = owl
 
 
 export class Table extends Component {
 
     setup() {
+        // Constants
+        this.props.addition_row = useRef("addition_row")
+        this.props.today = new Date().toISOString().split('T')[0]
+        // Variables
         this.state = useState({
             expenses: [],
             edit_line: 0
         })
         // Will start hook can be used to perform to load external assets, it will run just before the initial rendering.
         onWillStart(async () => {
-            this.loadExpenses()
+            await this.loadExpenses()
         })
     }
 
     async loadExpenses() {
         let response = await fetch('/api/expense/')
-        this.state.expenses = await response.json()  
+        this.state.expenses = await response.json()
+    }
+
+    onClickAdd(ev) {
+        this.props.addition_row.el.style.display = ''
     }
 
     onClickEdit(ev) {
@@ -28,12 +36,21 @@ export class Table extends Component {
     onClickDelete(ev) {
         console.log(ev)
     }
+
+    onClickSave(ev) {
+        console.log(ev)
+    }
+
+    onClickDiscard(ev) {
+        this.state.edit_line = 0
+        this.props.addition_row.el.style.display = 'none'
+    }
     
     static template = xml`
         <div class="row">
             <div class="col-11"/>
             <div class="col-1">
-            <button class="btn btn-primary">Add</button>
+            <button class="btn btn-primary" style="cursor: pointer;" t-on-click="onClickAdd">Add</button>
             </div>
         </div>
         <div class="row">
@@ -49,14 +66,24 @@ export class Table extends Component {
                     </tr>
                 </thead>
                 <tbody>
+                    <tr t-ref="addition_row" style="display: none;">
+                        <td><input type="date" class="form-control" t-att-value="props.today"/></td>
+                        <td><input type="text" class="form-control"/></td>
+                        <td><input type="number" class="form-control"/></td>
+                        <td><input type="text" class="form-control"/></td>
+                        <td style="width: 5%;"><i class="fa fa-check text-warning" style="cursor: pointer;" t-on-click="onClickSave"></i></td>
+                        <td style="width: 5%;"><i class="fa fa-close text-danger" style="cursor: pointer;" t-on-click="onClickDiscard"></i></td>
+                    </tr>
                     <t t-foreach="state.expenses" t-as="expense" t-key="expense.id">
                         <t t-if="expense.id == state.edit_line">
-                            <td><input type="date" t-model="expense.date" class="form-control"/></td>
-                            <td><input type="text" t-model="expense.expense" class="form-control"/></td>
-                            <td><input type="number" t-model="expense.price" class="form-control"/></td>
-                            <td><input type="text" t-model="expense.category" class="form-control"/></td>
-                            <td style="width: 5%;"><i class="fa fa-check text-warning" style="cursor: pointer;" t-on-click="onClickEdit"></i></td>
-                            <td style="width: 5%;"><i class="fa fa-trash text-danger" style="cursor: pointer;" t-on-click="onClickDelete"></i></td>
+                            <tr>
+                                <td><input type="date" t-model="expense.date" class="form-control"/></td>
+                                <td><input type="text" t-model="expense.expense" class="form-control"/></td>
+                                <td><input type="number" t-model="expense.price" class="form-control"/></td>
+                                <td><input type="text" t-model="expense.category" class="form-control"/></td>
+                                <td style="width: 5%;"><i class="fa fa-check text-warning" style="cursor: pointer;" t-on-click="onClickSave"></i></td>
+                                <td style="width: 5%;"><i class="fa fa-close text-danger" style="cursor: pointer;" t-on-click="onClickDiscard"></i></td>
+                            </tr>
                         </t>
                         <t t-else="">
                             <tr>
