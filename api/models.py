@@ -8,6 +8,7 @@ class Expense(models.Model):
     expense = models.CharField(max_length=20)
     price = models.FloatField()
     date = models.DateField()
+    category = models.CharField(max_length=20)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
 
