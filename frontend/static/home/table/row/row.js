@@ -24,6 +24,7 @@ export class Row extends Component {
     }
 
     onClickDiscard(ev) {
+        this.props.updateExpense()
         this.state.editable = false
     }
 

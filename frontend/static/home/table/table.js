@@ -1,12 +1,13 @@
 import { Row } from "./row/row.js"
 const {
-    Component, xml, useRef, useState, onWillStart
+    Component, xml, useSubEnv, useState, onWillStart
 } = owl
 
 
 export class Table extends Component {
 
     setup() {
+        useSubEnv({ myKey: "helo" })
         this.state = useState({
             expenses: []
         })
@@ -14,6 +15,7 @@ export class Table extends Component {
         onWillStart(async () => {
             await this.loadExpenses()
         })
+        this.updateExpense = this.updateExpense.bind(this)
     }
 
     async loadExpenses() {
@@ -29,6 +31,10 @@ export class Table extends Component {
             price: 0,
             category: null,
         })
+    }
+
+    updateExpense() {
+        this.state.expenses = this.state.expenses.filter(expense => expense.id !== 0)
     }
     
     static template = xml`
@@ -52,7 +58,7 @@ export class Table extends Component {
                 </thead>
                 <tbody>
                     <t t-foreach="state.expenses" t-as="expense" t-key="expense.id">
-                        <Row expense="expense"/>
+                        <Row expense="expense" t-props="{updateExpense: updateExpense}"/>
                     </t>
                 </tbody>
             </table>
