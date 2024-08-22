@@ -5,14 +5,10 @@ const {
 
 export class Row extends Component {
 
-    setup() {
-        this.state = useState({
-            editable: false
-        })
-    }
+    setup() {}
 
     static template = xml`
-        <t t-if="state.editable">
+        <t t-if="props.expense.editable">
             <tr>
                 <td><input type="date" t-model="props.expense.date" class="form-control"/></td>
                 <td><input type="text" t-model="props.expense.expense" class="form-control"/></td>

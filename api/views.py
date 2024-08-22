@@ -31,7 +31,18 @@ def expense(request):
     """
     To return the expenses.
     """
-    print(request.method)
-    expenses = Expense.objects.order_by('date').reverse()[:10]
-    serializer = ExpenseSerializer(expenses, many=True)
-    return Response(serializer.data)
+    if request.method == 'GET':
+        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        data = request.data
+        Expense.objects.create(
+            expense=data['expense'],
+            price=data['price'],
+            date=data['date'],
+            category=data['category']
+        )
+        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data) 

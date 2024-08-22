@@ -17,7 +17,12 @@ export class Table extends Component {
     }
 
     async loadExpenses() {
-        let response = await fetch('/api/expense/')
+        let response = await fetch('/api/expense/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
         this.state.expenses = await response.json()
     }
 
@@ -31,26 +36,41 @@ export class Table extends Component {
         })
     }
 
-    updateExpense() {
-        this.state.expenses = this.state.expenses.filter(expense => expense.id !== 0)
-    }
-
     onClickEdit(ev) {
-        console.log(ev)
-        // this.state.editable = true
+        this.state.expenses = this.state.expenses.map(
+            (expense) => {
+                expense['editable'] = false
+                return expense
+            }
+        )
+        this.state.expenses.filter(
+            expense => expense.id == ev.currentTarget.dataset['oe_id']
+        )[0]['editable'] = true
     }
 
     onClickDelete(ev) {
         console.log(ev)
     }
 
-    onClickSave(ev) {
-        console.log(ev)
+    async onClickSave(ev) {
+        const data = this.state.expenses.filter(
+            expense => expense.id == ev.currentTarget.dataset['oe_id']
+        )[0]
+        const response = await fetch('/api/expense/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        this.state.expenses = await response.json()
     }
 
     onClickDiscard(ev) {
-        console.log(ev)
-        // this.state.editable = false
+        this.state.expenses.filter(
+            expense => expense.id == ev.currentTarget.dataset['oe_id']
+        )[0]['editable'] = false
+        this.state.expenses = this.state.expenses.filter(expense => expense.id !== 0)
     }
     
     static template = xml`
