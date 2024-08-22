@@ -26,11 +26,12 @@ def get_routes(request):
     ]
     return Response(routes)
 
-@api_view(['GET'])
-def get_expenses(request):
+@api_view(['GET', 'POST'])
+def expense(request):
     """
     To return the expenses.
     """
-    expenses = Expense.objects.all()
+    print(request.method)
+    expenses = Expense.objects.order_by('date').reverse()[:10]
     serializer = ExpenseSerializer(expenses, many=True)
     return Response(serializer.data)
