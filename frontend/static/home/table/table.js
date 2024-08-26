@@ -48,16 +48,30 @@ export class Table extends Component {
         )[0]['editable'] = true
     }
 
-    onClickDelete(ev) {
-        console.log(ev)
+    async onClickDelete(ev) {
+        const response = await fetch('/api/expense/', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id: ev.currentTarget.dataset['oe_id']
+            })
+        })
+        this.state.expenses = await response.json()
     }
 
     async onClickSave(ev) {
         const data = this.state.expenses.filter(
             expense => expense.id == ev.currentTarget.dataset['oe_id']
         )[0]
+        if (ev.currentTarget.dataset['oe_id'] == 0) {
+            var method = 'POST'
+        } else {
+            var method = 'PUT'
+        }
         const response = await fetch('/api/expense/', {
-            method: 'POST',
+            method: method,
             headers: {
                 'Content-Type': 'application/json'
             },

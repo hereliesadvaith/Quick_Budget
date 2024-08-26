@@ -26,7 +26,7 @@ def get_routes(request):
     ]
     return Response(routes)
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def expense(request):
     """
     To return the expenses.
@@ -45,4 +45,14 @@ def expense(request):
         )
         expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
         serializer = ExpenseSerializer(expenses, many=True)
-        return Response(serializer.data) 
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
+    elif request.method == 'DELETE':
+        expense = Expense.objects.get(id=request.data.get('id'))
+        expense.delete()
+        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
