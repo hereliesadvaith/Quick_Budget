@@ -3,7 +3,7 @@ const {Component, xml} = owl
 
 
 export class Home extends Component {
-
+    
     static template = xml`
         <div class="container">
             <div class="row">

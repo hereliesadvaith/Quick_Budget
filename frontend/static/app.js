@@ -4,9 +4,10 @@ import { Home } from "./home/home.js"
 const {
     Component, mount, xml, useState, onWillStart
 } = owl
+const env = {}
 
 
-class App extends Component {
+class Root extends Component {
 
     // Setup runs just after the component is constructed.
     setup() {
@@ -39,4 +40,4 @@ class App extends Component {
     static components = { Home }
 }
 
-mount(App, document.getElementById("root"))
+mount(Root, document.getElementById("root"), { env })
