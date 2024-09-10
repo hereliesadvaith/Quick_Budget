@@ -10,26 +10,13 @@ def get_routes(request):
     """
     To return all the endpoints available.
     """
-    routes = [
-        {
-            'endpoint': '/expense/',
-            'method': 'GET',
-            'body': None,
-            'description': 'Returns an array of expenses'
-        },
-        {
-            'endpoint': '/expense/create/',
-            'method': 'POST',
-            'body': {'body': ''},
-            'description': 'Creates new expense with data sent in post request'
-        },
-    ]
+    routes = []
     return Response(routes)
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 def expense(request):
     """
-    To return the expenses.
+    To create, read, update and delete expenses.
     """
     if request.method == 'GET':
         expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
