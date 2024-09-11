@@ -89,9 +89,12 @@ export class Table extends Component {
     
     static template = xml`
         <div class="row">
-            <div class="col-11"/>
+            <div class="col-10"/>
             <div class="col-1">
             <button class="btn btn-primary" style="cursor: pointer;" t-on-click="onClickAdd">Add</button>
+            </div>
+            <div class="col-1">
+            <a href="/login/"><i class="fa fa-sign-out" style="cursor: pointer;color: white;font-size: 35px;"></i></a>
             </div>
         </div>
         <div class="row">

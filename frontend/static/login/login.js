@@ -2,8 +2,11 @@ const {Component, xml} = owl
 
 
 export class Login extends Component {
+    setup() {
+        localStorage.removeItem('authTokens')
+    }
 
-    async onSubmitForm(ev) {
+    async onSubmitForm() {
         const response = await fetch('/api/token/', {
             method: 'POST',
             headers: {
@@ -16,7 +19,8 @@ export class Login extends Component {
         })
         if (response.status === 200) {
             var data = await response.json()
-            console.log(jwt_decode(data['access']))
+            localStorage.setItem('authTokens', JSON.stringify(data))
+            window.location.href = '/'
         }
     }
     

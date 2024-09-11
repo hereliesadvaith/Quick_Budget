@@ -3,18 +3,16 @@ import { Login } from "./login/login.js"
 
 
 const {
-    Component, mount, xml, useState, useSubEnv
+    Component, mount, xml, useState, useSubEnv, onMounted
 } = owl
-const env = {}
+const env = {
+    'user': null
+}
 
 
 class Root extends Component {
-
     // Setup runs just after the component is constructed.
     setup() {
-        useSubEnv({
-            'user': 'Advaith'
-        })
         this.state = useState({
             currentRoute: window.location.pathname,
         })
@@ -23,6 +21,47 @@ class Root extends Component {
         window.addEventListener(
             'popstate', this.handlePopState.bind(this)
         )
+
+        // Check for logged user
+        if (localStorage.getItem('authTokens')) {
+            var auth = jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)
+            useSubEnv({
+                'user': auth.username,
+                'uid': auth.user_id
+            })
+        }
+        
+        // Redirect to login
+        if (this.state.currentRoute !== '/login/' && !this.env.user) {
+            window.location.pathname = '/login/'
+        }
+
+        // Refresh token
+        if (localStorage.getItem('authTokens')) {
+            setInterval(() => {
+                this.updateToken()
+            }, 4 * 60 * 1000)
+        }
+    }
+
+    async updateToken() {
+        const response = await fetch('/api/token/refresh/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'refresh': JSON.parse(localStorage.getItem('authTokens')).refresh
+            })
+        })
+        if (response.status === 200) {
+            var data = await response.json()
+            data.refresh = JSON.parse(localStorage.getItem('authTokens')).refresh
+            localStorage.setItem('authTokens', JSON.stringify(data))
+            console.log(data)
+        } else {
+            window.location.pathname = '/login/'
+        }
     }
 
     handlePopState() {
