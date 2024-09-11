@@ -58,7 +58,6 @@ class Root extends Component {
             var data = await response.json()
             data.refresh = JSON.parse(localStorage.getItem('authTokens')).refresh
             localStorage.setItem('authTokens', JSON.stringify(data))
-            console.log(data)
         } else {
             window.location.pathname = '/login/'
         }

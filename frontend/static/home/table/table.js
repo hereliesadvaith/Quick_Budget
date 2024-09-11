@@ -20,7 +20,8 @@ export class Table extends Component {
         let response = await fetch('/api/expense/', {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access
             }
         })
         this.state.expenses = await response.json()
