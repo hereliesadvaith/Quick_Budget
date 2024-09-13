@@ -3,6 +3,10 @@ const {Component, xml} = owl
 
 export class Login extends Component {
     setup() {
+        this.state = {
+            username: '',
+            password: ''
+        }
         localStorage.removeItem('authTokens')
     }
 
@@ -13,8 +17,8 @@ export class Login extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                username: document.querySelector('input[name="username"]').value,
-                password: document.querySelector('input[name="password"]').value
+                username: this.state.username,
+                password: this.state.password
             })
         })
         if (response.status === 200) {
@@ -27,8 +31,8 @@ export class Login extends Component {
     static template = xml`
         <div class="container">
             <h1 style="color:white;">Login</h1>
-            <input type="text" name="username" placeholder="Username"/>
-            <input type="password" name="password" placeholder="Password"/>
+            <input type="text" name="username" placeholder="Username" t-model="state.username"/>
+            <input type="password" name="password" placeholder="Password" t-model="state.password"/>
             <button class="btn btn-primary" t-on-click="onSubmitForm">Submit</button>
         </div>
     `
