@@ -1,5 +1,6 @@
 import { Home } from "./home/home.js"
 import { Login } from "./login/login.js"
+import { Signup } from "./signup/signup.js"
 
 
 const {
@@ -31,9 +32,11 @@ class Root extends Component {
             })
         }
         
-        // Redirect to login
+        // Redirect to login or signup
         if (this.state.currentRoute !== '/login/' && !this.env.user) {
-            window.location.pathname = '/login/'
+            if (this.state.currentRoute !== '/signup/') {
+                window.location.pathname = '/login/'
+            }
         }
 
         // Refresh token
@@ -80,9 +83,12 @@ class Root extends Component {
         <t t-if="state.currentRoute === '/login/'">
             <Login/>
         </t>
+        <t t-if="state.currentRoute === '/signup/'">
+            <Signup/>
+        </t>
     `
 
-    static components = { Home, Login }
+    static components = { Home, Login, Signup }
 }
 
 mount(Root, document.getElementById("root"), { env })
