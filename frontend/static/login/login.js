@@ -27,7 +27,7 @@ export class Login extends Component {
                 var data = await response.json()
                 localStorage.setItem('authTokens', JSON.stringify(data))
                 window.location.href = '/'
-            } else if (response.status === 401) {
+            } else {
                 this.state.warning = 'Wrong Username or Password'
             }
         } else {
