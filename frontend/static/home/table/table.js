@@ -12,19 +12,8 @@ export class Table extends Component {
         })
         // Will start hook can be used to perform to load external assets, it will run just before the initial rendering.
         onWillStart(async () => {
-            await this.loadExpenses()
+            this.state.expenses = await this.env.services.orm('expense')
         })
-    }
-
-    async loadExpenses() {
-        let response = await fetch('/api/expense/', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access
-            }
-        })
-        this.state.expenses = await response.json()
     }
 
     onClickAdd(ev) {

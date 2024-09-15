@@ -6,9 +6,6 @@ import { Signup } from "./signup/signup.js"
 const {
     Component, mount, xml, useState, useSubEnv, onMounted
 } = owl
-const env = {
-    'user': null
-}
 
 
 class Root extends Component {
@@ -28,7 +25,10 @@ class Root extends Component {
             var auth = jwt_decode(JSON.parse(localStorage.getItem('authTokens')).access)
             useSubEnv({
                 'user': auth.username,
-                'uid': auth.user_id
+                'uid': auth.user_id,
+                'services': {
+                    'orm': this.orm
+                }
             })
         }
         
@@ -76,6 +76,22 @@ class Root extends Component {
         this.state.currentRoute = window.location.pathname
     }
 
+    async orm(model) {
+        const url = new URL('/api/orm/', window.location.origin)
+        const params = {
+            model: model
+        }
+        url.search = new URLSearchParams(params).toString()
+        var expenses = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
+            }
+        })
+        return await expenses.json()
+    }
+
     static template = xml`
         <t t-if="state.currentRoute === '/'">
             <Home callback.bind="handleRouteChange"/>
@@ -91,4 +107,4 @@ class Root extends Component {
     static components = { Home, Login, Signup }
 }
 
-mount(Root, document.getElementById("root"), { env })
+mount(Root, document.getElementById("root"))

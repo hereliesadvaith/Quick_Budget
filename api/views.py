@@ -1,6 +1,6 @@
-from .models import Expense
 from .serializers import ExpenseSerializer
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -32,32 +32,14 @@ def signup(request):
 
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
-def expense(request):
+def orm(request):
     """
-    To create, read, update and delete expenses.
+    REST API CRUD Methods
     """
     if request.method == 'GET':
-        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
-        serializer = ExpenseSerializer(expenses, many=True)
-        return Response(serializer.data)
-    elif request.method == 'POST':
-        data = request.data
-        Expense.objects.create(
-            expense=data['expense'],
-            price=data['price'],
-            date=data['date'],
-            category=data['category']
-        )
-        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
-        serializer = ExpenseSerializer(expenses, many=True)
-        return Response(serializer.data)
-    elif request.method == 'PUT':
-        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
-        serializer = ExpenseSerializer(expenses, many=True)
-        return Response(serializer.data)
-    elif request.method == 'DELETE':
-        expense = Expense.objects.get(id=request.data.get('id'))
-        expense.delete()
-        expenses = Expense.objects.order_by('date', 'created').reverse()[:10]
-        serializer = ExpenseSerializer(expenses, many=True)
+        data = request.GET
+        content_type = ContentType.objects.get(model=data.get('model'))
+        model_class = content_type.model_class()
+        records = model_class.objects.order_by('date', 'created').reverse()[:10]
+        serializer = ExpenseSerializer(records, many=True)
         return Response(serializer.data)
