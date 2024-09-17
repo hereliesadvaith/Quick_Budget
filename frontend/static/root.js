@@ -76,13 +76,8 @@ class Root extends Component {
         this.state.currentRoute = window.location.pathname
     }
 
-    async orm(model, method, data) {
-        const url = new URL('/api/orm/', window.location.origin)
+    async orm(url, method, data) {
         if (method === 'GET') {
-            const params = {
-                model: model
-            }
-            url.search = new URLSearchParams(params).toString()
             var records = await fetch(url, {
                 method: 'GET',
                 headers: {
@@ -92,19 +87,31 @@ class Root extends Component {
             })
             return await records.json()
         } else if (method == 'POST') {
-            var body = {
-                model: model,
-                fields: data
-            }
-            var records = await fetch(url, {
+            await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
                 },
-                body: JSON.stringify(body)
+                body: JSON.stringify(data)
             })
-            return await records.json()
+        } else if (method == 'PUT') {
+            await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
+                },
+                body: JSON.stringify(data)
+            })
+        } else if (method == 'DELETE') {
+            await fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
+                }
+            })
         }
     }
 

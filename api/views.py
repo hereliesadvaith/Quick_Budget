@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from importlib import import_module
+from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -38,9 +39,9 @@ def get_classes(model):
     )
     return model_class, serializer_class
 
-@api_view(['GET', 'POST', 'PUT', 'DELETE'])
+@api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
-def orm(request):
+def orm_all(request, model):
     """
     REST API CRUD Methods
     """
@@ -49,7 +50,7 @@ def orm(request):
 
         case 'GET':
             data = request.GET
-            model_class, serializer_class = get_classes(data.get('model'))
+            model_class, serializer_class = get_classes(model)
             records = model_class.objects.filter(user=user).order_by(
                 'date', 'created'
             ).reverse()[:10]
@@ -58,17 +59,45 @@ def orm(request):
 
         case 'POST':
             data = request.data
-            model_class, serializer_class = get_classes(data.get('model'))
+            model_class, serializer_class = get_classes(model)
+            data.pop('id')
             fields = {
-                key: value for key, value in data.get('fields').items(
+                key: value for key, value in data.items(
                 ) if key in [
                     field.name for field in model_class._meta.fields
                 ]
             }
             fields['user'] = user
             model_class.objects.create(**fields)
-            records = model_class.objects.filter(user=user).order_by(
-                'date', 'created'
-            ).reverse()[:10]
-            serializer = serializer_class(records, many=True)
-            return Response(serializer.data)
+            return Response(status=status.HTTP_201_CREATED)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def orm_one(request, model, id):
+    """
+    REST API CRUD Methods
+    """
+    match request.method:
+
+        case 'PUT':
+            data = request.data
+            model_class, serializer_class = get_classes(model)
+            data.pop('id')
+            data.pop('user')
+            fields = {
+                key: value for key, value in data.items(
+                ) if key in [
+                    field.name for field in model_class._meta.fields
+                ]
+            }
+            record = model_class.objects.get(id=id)
+            for attr, value in fields.items():
+                setattr(record, attr, value)
+            record.save()
+            return Response(status=status.HTTP_200_OK)
+
+        case 'DELETE':
+            model_class, serializer_class = get_classes(model)
+            record = model_class.objects.get(id=id)
+            record.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)

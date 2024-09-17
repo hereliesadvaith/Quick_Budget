@@ -12,7 +12,7 @@ export class Table extends Component {
         })
         // Will start hook can be used to perform to load external assets, it will run just before the initial rendering.
         onWillStart(async () => {
-            this.state.expenses = await this.env.services.orm('expense', 'GET')
+            this.state.expenses = await this.env.services.orm('/api/orm/expense/', 'GET')
         })
     }
 
@@ -39,29 +39,26 @@ export class Table extends Component {
     }
 
     async onClickDelete(ev) {
-        const response = await fetch('/api/expense/', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: ev.currentTarget.dataset['oe_id']
-            })
-        })
-        this.state.expenses = await response.json()
+        await this.env.services.orm(
+            '/api/orm/expense/' + ev.currentTarget.dataset['oe_id'] + '/',
+            'DELETE'
+        )
+        this.state.expenses = await this.env.services.orm('/api/orm/expense/', 'GET')
     }
 
     async onClickSave(ev) {
-        const fields = this.state.expenses.filter(
+        const data = this.state.expenses.filter(
             expense => expense.id == ev.currentTarget.dataset['oe_id']
         )[0]
         if (ev.currentTarget.dataset['oe_id'] == 0) {
+            var url = '/api/orm/expense/'
             var method = 'POST'
         } else {
+            var url = '/api/orm/expense/' + ev.currentTarget.dataset['oe_id'] + '/' 
             var method = 'PUT'
         }
-        delete fields.id
-        this.state.expenses = await this.env.services.orm('expense', method, fields)
+        await this.env.services.orm(url, method, data)
+        this.state.expenses = await this.env.services.orm('/api/orm/expense/', 'GET')
     }
 
     onClickDiscard(ev) {
