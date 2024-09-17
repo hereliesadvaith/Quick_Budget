@@ -36,10 +36,12 @@ def orm(request):
     """
     REST API CRUD Methods
     """
+    user = request.user
     if request.method == 'GET':
         data = request.GET
         content_type = ContentType.objects.get(model=data.get('model'))
         model_class = content_type.model_class()
-        records = model_class.objects.order_by('date', 'created').reverse()[:10]
+        records = model_class.objects.filter(user=user).order_by(
+            'date', 'created').reverse()[:10]
         serializer = ExpenseSerializer(records, many=True)
         return Response(serializer.data)
