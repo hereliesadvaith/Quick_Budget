@@ -12,7 +12,7 @@ export class Table extends Component {
         })
         // Will start hook can be used to perform to load external assets, it will run just before the initial rendering.
         onWillStart(async () => {
-            this.state.expenses = await this.env.services.orm('expense')
+            this.state.expenses = await this.env.services.orm('expense', 'GET')
         })
     }
 
@@ -52,7 +52,7 @@ export class Table extends Component {
     }
 
     async onClickSave(ev) {
-        const data = this.state.expenses.filter(
+        const fields = this.state.expenses.filter(
             expense => expense.id == ev.currentTarget.dataset['oe_id']
         )[0]
         if (ev.currentTarget.dataset['oe_id'] == 0) {
@@ -60,14 +60,8 @@ export class Table extends Component {
         } else {
             var method = 'PUT'
         }
-        const response = await fetch('/api/expense/', {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        this.state.expenses = await response.json()
+        delete fields.id
+        this.state.expenses = await this.env.services.orm('expense', method, fields)
     }
 
     onClickDiscard(ev) {

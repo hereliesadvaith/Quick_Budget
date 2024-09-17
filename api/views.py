@@ -30,6 +30,14 @@ def signup(request):
     user.save()
     return Response()
 
+def get_classes(model):
+    model_class =  ContentType.objects.get(model=model).model_class()
+    serializer_class = getattr(
+        import_module('api.serializers'),
+        model.capitalize() + 'Serializer'
+    )
+    return model_class, serializer_class
+
 @api_view(['GET', 'POST', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticated])
 def orm(request):
@@ -38,16 +46,29 @@ def orm(request):
     """
     user = request.user
     match request.method:
+
         case 'GET':
             data = request.GET
-            content_type = ContentType.objects.get(model=data.get('model'))
-            model_class = content_type.model_class()
-            serializer_class = getattr(
-                import_module('api.serializers'),
-                data.get('model').capitalize() + 'Serializer'
-            )
+            model_class, serializer_class = get_classes(data.get('model'))
             records = model_class.objects.filter(user=user).order_by(
-                'date', 'created').reverse()[:10]
+                'date', 'created'
+            ).reverse()[:10]
             serializer = serializer_class(records, many=True)
             return Response(serializer.data)
-    
+
+        case 'POST':
+            data = request.data
+            model_class, serializer_class = get_classes(data.get('model'))
+            fields = {
+                key: value for key, value in data.get('fields').items(
+                ) if key in [
+                    field.name for field in model_class._meta.fields
+                ]
+            }
+            fields['user'] = user
+            model_class.objects.create(**fields)
+            records = model_class.objects.filter(user=user).order_by(
+                'date', 'created'
+            ).reverse()[:10]
+            serializer = serializer_class(records, many=True)
+            return Response(serializer.data)

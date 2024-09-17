@@ -76,20 +76,36 @@ class Root extends Component {
         this.state.currentRoute = window.location.pathname
     }
 
-    async orm(model) {
+    async orm(model, method, data) {
         const url = new URL('/api/orm/', window.location.origin)
-        const params = {
-            model: model
-        }
-        url.search = new URLSearchParams(params).toString()
-        var expenses = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
+        if (method === 'GET') {
+            const params = {
+                model: model
             }
-        })
-        return await expenses.json()
+            url.search = new URLSearchParams(params).toString()
+            var records = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
+                }
+            })
+            return await records.json()
+        } else if (method == 'POST') {
+            var body = {
+                model: model,
+                fields: data
+            }
+            var records = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('authTokens')).access                
+                },
+                body: JSON.stringify(body)
+            })
+            return await records.json()
+        }
     }
 
     static template = xml`
