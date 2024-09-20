@@ -1,5 +1,6 @@
-from rest_framework.serializers import ModelSerializer
 from .models import Expense
+from django.utils import timezone
+from rest_framework.serializers import ModelSerializer
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
@@ -18,10 +19,11 @@ class ExpenseSerializer(ModelSerializer):
         return expenses
 
 
-
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
         token['username'] = user.username
+        user.last_login = timezone.now()
+        user.save()
         return token

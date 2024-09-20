@@ -14,6 +14,7 @@ class Root extends Component {
     window.addEventListener("popstate", this.handlePopState.bind(this));
     // Check for logged user
     if (localStorage.getItem("authTokens")) {
+      this.updateToken();
       var auth = jwt_decode(
         JSON.parse(localStorage.getItem("authTokens")).access
       );
