@@ -1,59 +1,63 @@
-const {Component, useState, xml} = owl
-
+const { Component, useState, xml } = owl;
 
 export class Signup extends Component {
-    setup() {
-        this.state = useState({
-            username: '',
-            fname: '',
-            lname: '',
-            password: '',
-            warning: ''
-        })
-        localStorage.removeItem('authTokens')
-    }
+  setup() {
+    this.state = useState({
+      username: "",
+      fname: "",
+      lname: "",
+      password: "",
+      warning: "",
+    });
+    localStorage.removeItem("authTokens");
+  }
 
-    async onSubmitForm() {
-        if (this.state.username && this.state.password && this.state.fname && this.state.lname) {
-            const response = await fetch('/api/signup/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: this.state.username,
-                    password: this.state.password,
-                    fname: this.state.fname,
-                    lname: this.state.lname,
-                })
-            })
-            if (response.status === 200) {
-                const login = await fetch('/api/token/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: this.state.username,
-                        password: this.state.password
-                    })
-                })
-                if (login.status === 200) {
-                    var data = await login.json()
-                    localStorage.setItem('authTokens', JSON.stringify(data))
-                    window.location.href = '/'
-                } else {
-                    this.state.warning = 'Something went wrong please try again'
-                }
-            } else {
-                this.state.warning = 'Something went wrong please try again'
-            }
+  async onSubmitForm() {
+    if (
+      this.state.username &&
+      this.state.password &&
+      this.state.fname &&
+      this.state.lname
+    ) {
+      const response = await fetch("/api/signup/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: this.state.username,
+          password: this.state.password,
+          fname: this.state.fname,
+          lname: this.state.lname,
+        }),
+      });
+      if (response.status === 200) {
+        const login = await fetch("/api/token/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: this.state.username,
+            password: this.state.password,
+          }),
+        });
+        if (login.status === 200) {
+          var data = await login.json();
+          localStorage.setItem("authTokens", JSON.stringify(data));
+          window.location.href = "/";
         } else {
-            this.state.warning = 'Please fill all the fields'
+          this.state.warning = "Something went wrong please try again";
         }
+      } else {
+        this.state.warning = "Something went wrong please try again";
+      }
+    } else {
+      this.state.warning = "Please fill all the fields";
     }
-    
-    static template = xml`
+  }
+
+  static template = xml`
     <div class="row vh-100" style="margin: 0;background: #f2b143;font-family: 'Poppins', sans-serif;">
         <div class="col-8" style="background: #f9fafa;">
             <img class="vh-100" src="https://st2.depositphotos.com/1074452/7714/i/950/depositphotos_77144853-stock-photo-budget-words-represents-budgets-accounting.jpg"/>
@@ -71,5 +75,5 @@ export class Signup extends Component {
             </div>
         </div>
     </div>
-    `
+    `;
 }

@@ -1,41 +1,40 @@
-const {Component, useState, xml} = owl
-
+const { Component, useState, xml } = owl;
 
 export class Login extends Component {
-    setup() {
-        this.state = useState({
-            username: '',
-            password: '',
-            warning: ''
-        })
-        localStorage.removeItem('authTokens')
-    }
+  setup() {
+    this.state = useState({
+      username: "",
+      password: "",
+      warning: "",
+    });
+    localStorage.removeItem("authTokens");
+  }
 
-    async onSubmitForm() {
-        if (this.state.username && this.state.password) {
-            const response = await fetch('/api/token/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    username: this.state.username,
-                    password: this.state.password
-                })
-            })
-            if (response.status === 200) {
-                var data = await response.json()
-                localStorage.setItem('authTokens', JSON.stringify(data))
-                window.location.href = '/'
-            } else {
-                this.state.warning = 'Wrong Username or Password'
-            }
-        } else {
-            this.state.warning = 'Wrong Username or Password'
-        }
+  async onSubmitForm() {
+    if (this.state.username && this.state.password) {
+      const response = await fetch("/api/token/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: this.state.username,
+          password: this.state.password,
+        }),
+      });
+      if (response.status === 200) {
+        var data = await response.json();
+        localStorage.setItem("authTokens", JSON.stringify(data));
+        window.location.href = "/";
+      } else {
+        this.state.warning = "Wrong Username or Password";
+      }
+    } else {
+      this.state.warning = "Wrong Username or Password";
     }
-    
-    static template = xml`
+  }
+
+  static template = xml`
     <div class="row vh-100" style="margin: 0;background: #f2b143;font-family: 'Poppins', sans-serif;">
         <div class="col-8" style="background: #f9fafa;">
             <img class="vh-100" src="https://st2.depositphotos.com/1074452/7714/i/950/depositphotos_77144853-stock-photo-budget-words-represents-budgets-accounting.jpg"/>
@@ -51,5 +50,5 @@ export class Login extends Component {
             </div>
         </div>
     </div>
-    `
+    `;
 }

@@ -1,10 +1,8 @@
-import { Table } from "./table/table.js"
-const {Component, xml} = owl
-
+import { Table } from "./table/table.js";
+const { Component, xml } = owl;
 
 export class Home extends Component {
-    
-    static template = xml`
+  static template = xml`
         <div class="container">
             <div class="row">
                 <div class="col">
@@ -15,7 +13,7 @@ export class Home extends Component {
                 <Table/>
             </div>
         </div>
-    `
+    `;
 
-    static components = { Table }
+  static components = { Table };
 }

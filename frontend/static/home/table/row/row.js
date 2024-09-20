@@ -1,13 +1,7 @@
-const {
-    Component, xml, useRef, useState, onWillStart, onMounted
-} = owl
-
+const { Component, xml } = owl;
 
 export class Row extends Component {
-
-    setup() {}
-
-    static template = xml`
+  static template = xml`
         <t t-if="props.expense.editable">
             <tr>
                 <td><input type="date" t-model="props.expense.date" class="form-control"/></td>
@@ -40,5 +34,5 @@ export class Row extends Component {
                 </tr>
             </t>
         </t>
-    `
+    `;
 }

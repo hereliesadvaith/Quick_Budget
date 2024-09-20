@@ -1,74 +1,80 @@
-import { Row } from "./row/row.js"
-const {
-    Component, xml, useState, onWillStart
-} = owl
-
+import { Row } from "./row/row.js";
+const { Component, onWillStart, useState, xml } = owl;
 
 export class Table extends Component {
+  setup() {
+    this.state = useState({
+      expenses: [],
+    });
+    // Will start hook can be used to perform to load external assets,
+    //it will run just before the initial rendering.
+    onWillStart(async () => {
+      this.state.expenses = await this.env.services.orm(
+        "/api/orm/expense/",
+        "GET"
+      );
+    });
+  }
 
-    setup() {
-        this.state = useState({
-            expenses: []
-        })
-        // Will start hook can be used to perform to load external assets, it will run just before the initial rendering.
-        onWillStart(async () => {
-            this.state.expenses = await this.env.services.orm('/api/orm/expense/', 'GET')
-        })
-    }
+  onClickAdd(ev) {
+    this.state.expenses.push({
+      id: 0,
+      date: new Date().toISOString().split("T")[0],
+      expense: null,
+      price: 0,
+      category: null,
+    });
+  }
 
-    onClickAdd(ev) {
-        this.state.expenses.push({
-            id: 0,
-            date: new Date().toISOString().split('T')[0],
-            expense: null,
-            price: 0,
-            category: null,
-        })
-    }
+  onClickEdit(ev) {
+    this.state.expenses = this.state.expenses.map((expense) => {
+      expense["editable"] = false;
+      return expense;
+    });
+    this.state.expenses.filter(
+      (expense) => expense.id == ev.currentTarget.dataset["oe_id"]
+    )[0]["editable"] = true;
+  }
 
-    onClickEdit(ev) {
-        this.state.expenses = this.state.expenses.map(
-            (expense) => {
-                expense['editable'] = false
-                return expense
-            }
-        )
-        this.state.expenses.filter(
-            expense => expense.id == ev.currentTarget.dataset['oe_id']
-        )[0]['editable'] = true
-    }
+  async onClickDelete(ev) {
+    await this.env.services.orm(
+      "/api/orm/expense/" + ev.currentTarget.dataset["oe_id"] + "/",
+      "DELETE"
+    );
+    this.state.expenses = await this.env.services.orm(
+      "/api/orm/expense/",
+      "GET"
+    );
+  }
 
-    async onClickDelete(ev) {
-        await this.env.services.orm(
-            '/api/orm/expense/' + ev.currentTarget.dataset['oe_id'] + '/',
-            'DELETE'
-        )
-        this.state.expenses = await this.env.services.orm('/api/orm/expense/', 'GET')
+  async onClickSave(ev) {
+    const data = this.state.expenses.filter(
+      (expense) => expense.id == ev.currentTarget.dataset["oe_id"]
+    )[0];
+    if (ev.currentTarget.dataset["oe_id"] == 0) {
+      var url = "/api/orm/expense/";
+      var method = "POST";
+    } else {
+      var url = "/api/orm/expense/" + ev.currentTarget.dataset["oe_id"] + "/";
+      var method = "PUT";
     }
+    await this.env.services.orm(url, method, data);
+    this.state.expenses = await this.env.services.orm(
+      "/api/orm/expense/",
+      "GET"
+    );
+  }
 
-    async onClickSave(ev) {
-        const data = this.state.expenses.filter(
-            expense => expense.id == ev.currentTarget.dataset['oe_id']
-        )[0]
-        if (ev.currentTarget.dataset['oe_id'] == 0) {
-            var url = '/api/orm/expense/'
-            var method = 'POST'
-        } else {
-            var url = '/api/orm/expense/' + ev.currentTarget.dataset['oe_id'] + '/' 
-            var method = 'PUT'
-        }
-        await this.env.services.orm(url, method, data)
-        this.state.expenses = await this.env.services.orm('/api/orm/expense/', 'GET')
-    }
+  onClickDiscard(ev) {
+    this.state.expenses.filter(
+      (expense) => expense.id == ev.currentTarget.dataset["oe_id"]
+    )[0]["editable"] = false;
+    this.state.expenses = this.state.expenses.filter(
+      (expense) => expense.id !== 0
+    );
+  }
 
-    onClickDiscard(ev) {
-        this.state.expenses.filter(
-            expense => expense.id == ev.currentTarget.dataset['oe_id']
-        )[0]['editable'] = false
-        this.state.expenses = this.state.expenses.filter(expense => expense.id !== 0)
-    }
-    
-    static template = xml`
+  static template = xml`
         <div class="row">
             <div class="col-10"/>
             <div class="col-1">
@@ -103,7 +109,7 @@ export class Table extends Component {
                 </tbody>
             </table>
         </div>
-    `
+    `;
 
-    static components = { Row }
+  static components = { Row };
 }
