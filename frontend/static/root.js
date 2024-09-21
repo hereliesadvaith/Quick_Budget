@@ -1,3 +1,4 @@
+import { Error } from "./error/error.js";
 import { Home } from "./home/home.js";
 import { Login } from "./login/login.js";
 import { Signup } from "./signup/signup.js";
@@ -8,7 +9,7 @@ class Root extends Component {
   setup() {
     // useState hook to re render page based on current route
     this.state = useState({
-      currentRoute: window.location.pathname,
+      currentRoute: window.location.pathname.replace(/^\/[a-z]{2}/, ''),
     });
     // We need to create custom Router for our SPA
     window.addEventListener("popstate", this.handlePopState.bind(this));
@@ -117,15 +118,18 @@ class Root extends Component {
         <t t-if="state.currentRoute === '/'">
             <Home callback.bind="handleRouteChange"/>
         </t>
-        <t t-if="state.currentRoute === '/login/'">
+        <t t-elif="state.currentRoute === '/login/'">
             <Login/>
         </t>
-        <t t-if="state.currentRoute === '/signup/'">
+        <t t-elif="state.currentRoute === '/signup/'">
             <Signup/>
+        </t>
+        <t t-else="">
+            <Error/>
         </t>
     `;
 
-  static components = { Home, Login, Signup };
+  static components = { Error, Home, Login, Signup };
 }
 
 mount(Root, document.getElementById("root"));
