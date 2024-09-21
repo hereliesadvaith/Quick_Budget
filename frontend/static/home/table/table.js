@@ -3,6 +3,7 @@ const { Component, onWillStart, useState, xml } = owl;
 
 export class Table extends Component {
   setup() {
+    this._t = this.env.services._t
     this.state = useState({
       expenses: [],
     });
@@ -78,7 +79,7 @@ export class Table extends Component {
         <div class="row">
             <div class="col-10"/>
             <div class="col-1">
-            <button class="btn btn-primary" style="cursor: pointer;" t-on-click="onClickAdd">Add</button>
+            <button class="btn btn-primary" style="cursor: pointer;" t-on-click="onClickAdd"><t t-esc="_t('Add')"/></button>
             </div>
             <div class="col-1">
             <a href="/login/"><i class="fa fa-sign-out" style="cursor: pointer;color: white;font-size: 35px;"></i></a>
@@ -88,10 +89,10 @@ export class Table extends Component {
             <table class="table table-dark table-hover" id="expenseTable">
                 <thead class="thead-dark">
                     <tr>
-                        <th>Date</th>
-                        <th>Expense</th>
-                        <th>Amount</th>
-                        <th>Category</th>
+                        <th><t t-esc="_t('Date')"/></th>
+                        <th><t t-esc="_t('Expense')"/></th>
+                        <th><t t-esc="_t('Amount')"/></th>
+                        <th><t t-esc="_t('Category')"/></th>
                         <th></th>
                         <th></th>
                     </tr>

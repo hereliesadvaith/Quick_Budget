@@ -25,6 +25,7 @@ class Root extends Component {
         uid: auth.user_id,
         services: {
           orm: this.orm,
+          _t: gettext,
         },
       });
     }
