@@ -1,0 +1,39 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Advaith B G <hereliesadvaith@gmail.com>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-21 09:50+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Advaith B G <hereliesadvaith@gmail.com>\n"
+"Language-Team: German <hereliesadvaith@gmail.com>\n"
+"Language: German \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: frontend/static/home/table/table.js:0
+msgid "Add"
+msgstr "anfügen"
+
+#: frontend/static/home/table/table.js:0
+msgid "Date"
+msgstr "Datum"
+
+#: frontend/static/home/table/table.js:0
+msgid "Expense"
+msgstr "Kosten"
+
+#: frontend/static/home/table/table.js:0
+msgid "Amount"
+msgstr "Menge"
+
+#: frontend/static/home/table/table.js:0
+msgid "Category"
+msgstr "Kategorie"
